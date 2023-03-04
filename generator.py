@@ -7,7 +7,7 @@ class DataGenerator:
         self.env = env
 
         if device is None:
-            self. device = "cuda" if torch.cuda.is_available() else "cpu"
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
         else:
             self.device = device
 
@@ -41,6 +41,8 @@ class DataGenerator:
             data.append(episode)
 
         data = torch.stack(data,dim=0)
+        
+        data = data.to(self.device)
 
         return data
 

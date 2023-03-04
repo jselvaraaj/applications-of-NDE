@@ -4,10 +4,12 @@ import torch.nn.functional as F
 
 class Policy:
 
-    def __init__(self, state_space_size,action_space_size) -> None:
+    def __init__(self, state_space_size,action_space_size,device) -> None:
         self.policy = PolicyNetwork(state_space_size,action_space_size)
         self.input_size = state_space_size
         self.output_size = action_space_size
+
+        self.policy.to(device)
 
         self._update_weights()
 
