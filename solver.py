@@ -1,7 +1,7 @@
 import torch
 import torchcde
 
-def train(X,y,model,num_epochs,batch_size = 32):
+def train(X,y,model,num_epochs= 100,batch_size = 32):
   optimizer = torch.optim.Adam(model.parameters())
 
   train_coeffs = torchcde.hermite_cubic_coefficients_with_backward_differences(X)
