@@ -21,7 +21,9 @@ class DegeneratedMarkovProcess:
     def step(self):
         action = self.policy.get_action(self.observation)
 
-        self.observation, reward, terminated, truncated, info = self.env.step(action)
+        obs, reward, terminated, truncated, info = self.env.step(action)
+
+        self.observation = torch.from_numpy(obs[0])
 
         return terminated
 
