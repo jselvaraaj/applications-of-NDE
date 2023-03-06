@@ -20,7 +20,9 @@ train_X, train_y = data_gen.get_X_y(policy1,100,20)
 
 test_X, test_y = data_gen.get_X_y(policy1,100,20)
 
-model = networks.DynamicsFunction(input_channels=584, hidden_channels=8, output_channels=584)
+state_dim = train_X.shape[-1]
+
+model = networks.DynamicsFunction(input_channels=state_dim, hidden_channels=8, output_channels=state_dim)
 
 model.to(device)
 

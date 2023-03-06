@@ -3,8 +3,27 @@ import torch.nn as nn
 import torch.nn.functional as F
 import math
 import torchcde
+import torchdiffeq
 
 
+class DegeneratedMarkovStateEvolver(torch.nn.Module):
+    def __init__(self, state_dim,hidden_channels):
+        super(DegeneratedMarkovStateEvolver, self).__init__()
+
+        self.net = nn.Sequential(
+            nn.Linear(state_dim, hidden_channels),
+            nn.Tanh(),
+            nn.Linear(hidden_channels, state_dim),
+        )
+
+        for m in self.net.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, mean=0, std=0.1)
+                nn.init.constant_(m.bias, val=0)
+
+    def forward(self, t, y):
+        return self.net(y)
+    
 class DynamicsTrajectoryDE(torch.nn.Module):
     def __init__(self, input_channels, hidden_channels):
 
@@ -14,6 +33,7 @@ class DynamicsTrajectoryDE(torch.nn.Module):
 
         self.linear1 = torch.nn.Linear(hidden_channels, 128)
         self.linear2 = torch.nn.Linear(128, input_channels * hidden_channels)
+        
 
     def forward(self, t, z):
         z = self.linear1(z)
@@ -23,12 +43,13 @@ class DynamicsTrajectoryDE(torch.nn.Module):
         z = z.tanh()
 
         z = z.view(z.size(0), self.hidden_channels, self.input_channels)
+
         return z
 
 
 
 class DynamicsFunction(torch.nn.Module):
-    def __init__(self, input_channels, hidden_channels, output_channels, interpolation="cubic"):
+    def __init__(self, input_channels, hidden_channels, output_channels, interpolation="cubic", evolve = 5,device = None):
         super(DynamicsFunction, self).__init__()
 
         self.initial = torch.nn.Linear(input_channels, hidden_channels)
@@ -38,6 +59,15 @@ class DynamicsFunction(torch.nn.Module):
         self.readout = torch.nn.Linear(hidden_channels, output_channels)
 
         self.interpolation = interpolation
+
+        if device is None:
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        else:
+            self.device = device
+
+        self.evolve = torch.float(evolve).to(device)
+
+        self.evolver = DegeneratedMarkovStateEvolver(input_channels,hidden_channels)
 
     def forward(self, coeffs):
         if self.interpolation == 'cubic':
@@ -67,6 +97,9 @@ class DynamicsFunction(torch.nn.Module):
         ######################
         z_T = z_T[:, 1]
         pred_y = self.readout(z_T)
+
+        pred_y = torchdiffeq.odeint(self.evolver(), pred_y.unsqueeze(0), self.evolve)
+        
         return pred_y
 
 
