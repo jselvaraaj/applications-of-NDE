@@ -65,7 +65,7 @@ class DynamicsFunction(torch.nn.Module):
         else:
             self.device = device
 
-        self.evolve = torch.float(evolve).to(device)
+        self.evolve = torch.tensor([evolve]).to(device)
 
         self.evolver = DegeneratedMarkovStateEvolver(input_channels,hidden_channels)
 
