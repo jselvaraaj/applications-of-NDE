@@ -33,7 +33,7 @@ class DynamicsTrajectoryDE(torch.nn.Module):
 
         self.linear1 = torch.nn.Linear(hidden_channels, 128)
         self.linear2 = torch.nn.Linear(128, input_channels * hidden_channels)
-        
+      
 
     def forward(self, t, z):
         z = self.linear1(z)
@@ -65,7 +65,7 @@ class DynamicsFunction(torch.nn.Module):
         else:
             self.device = device
 
-        self.evolve = torch.tensor([evolve]).to(device)
+        self.evolve = torch.tensor(float(evolve)).to(device)
 
         self.evolver = DegeneratedMarkovStateEvolver(input_channels,hidden_channels)
 
@@ -97,9 +97,11 @@ class DynamicsFunction(torch.nn.Module):
         ######################
         z_T = z_T[:, 1]
         pred_y = self.readout(z_T)
-
-        pred_y = torchdiffeq.odeint(self.evolver(), pred_y.unsqueeze(0), self.evolve)
         
-        return pred_y
+        n = pred_y.shape[0]
+        
+        pred_y = torchdiffeq.odeint(self.evolver, pred_y, torch.stack((torch.tensor(0.0),self.evolve)).to(self.device))
+        
+        return pred_y[1]
 
 
