@@ -11,6 +11,8 @@ class GridWorldEnv(gym.Env):
         self.size = size  # The size of the square grid
         self.window_size = 512  # The size of the PyGame window
 
+        self._target_location = np.asarray([size//2,size//2])  # The location of the target
+
         # Observations are dictionaries with the agent's and the target's location.
         # Each location is encoded as an element of {0, ..., `size`}^2, i.e. MultiDiscrete([size, size]).
         self.observation_space = spaces.Dict(
@@ -66,12 +68,12 @@ class GridWorldEnv(gym.Env):
       # Choose the agent's location uniformly at random
       self._agent_location = self.np_random.integers(0, self.size, size=2, dtype=int)
 
-      # We will sample the target's location randomly until it does not coincide with the agent's location
-      self._target_location = self._agent_location
-      while np.array_equal(self._target_location, self._agent_location):
-          self._target_location = self.np_random.integers(
-              0, self.size, size=2, dtype=int
-          )
+    #   # We will sample the target's location randomly until it does not coincide with the agent's location
+    #   self._target_location = self._agent_location
+    #   while np.array_equal(self._target_location, self._agent_location):
+    #       self._target_location = self.np_random.integers(
+    #           0, self.size, size=2, dtype=int
+    #       )
 
       observation = self._get_obs()
       info = self._get_info()
