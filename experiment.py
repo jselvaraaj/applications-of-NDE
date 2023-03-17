@@ -20,6 +20,8 @@ class Experiment:
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, test_size=test_size)
 
+        print("\n\n")
+
         print("Baseline policy")
         print("Training model...")
 
@@ -28,11 +30,12 @@ class Experiment:
         print("Testing model...")
         solver.test(X_test,y_test, self.baseline_policy)
 
+        print("\n\n")
 
         print("Test policy")
         print("Training model...")
 
-        solver.train(X_train,y_train, self.test_policy)
+        solver.train(X_train,y_train, self.test_policy,DE=True)
 
         print("Testing model...")
-        solver.test(X_test,y_test, self.test_policy)
+        solver.test(X_test,y_test, self.test_policy,DE=True)

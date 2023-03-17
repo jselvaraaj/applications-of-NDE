@@ -105,3 +105,35 @@ class DynamicsFunction(torch.nn.Module):
         return pred_y[1]
 
 
+class NNBaseline(torch.nn.Module):
+    def __init__(self, state_dim,hidden_channels,evolve = 5,device = None):
+        super(NNBaseline, self).__init__()
+
+        self.net = nn.Sequential(
+            nn.Linear(state_dim, hidden_channels),
+            nn.Tanh(),
+            nn.Linear(hidden_channels, state_dim),
+        )
+
+        if device is None:
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        else:
+            self.device = device
+
+        self.evolve = evolve 
+
+        self.net.to(self.device)
+
+
+        for m in self.net.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, mean=0, std=0.1)
+                nn.init.constant_(m.bias, val=0)
+
+    def forward(self, y):
+        
+        y = y[:,-1,:]
+        for i in range(self.evolve):
+            y = self.net(y)
+
+        return y
