@@ -1,7 +1,7 @@
 import torch
 import torchcde
 
-def train(X,y,model,num_epochs= 100,batch_size = 32):
+def train(X,y,model,num_epochs= 100,batch_size = 32,verbose = False):
 
   optimizer = torch.optim.Adam(model.parameters())
 
@@ -12,7 +12,8 @@ def train(X,y,model,num_epochs= 100,batch_size = 32):
   train_dataset = torch.utils.data.TensorDataset(train_coeffs, y)
   train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size)
   for epoch in range(num_epochs):
-    print(f'Epoch: {epoch}',end=' ')
+    if verbose:
+      print(f'Epoch: {epoch}',end=' ')
     for batch in train_dataloader:
       batch_coeffs, batch_y = batch
 
@@ -21,7 +22,9 @@ def train(X,y,model,num_epochs= 100,batch_size = 32):
       loss.backward()
       optimizer.step()
       optimizer.zero_grad()
-    print(f'Training loss: {loss.item()}')
+
+    if verbose:
+      print(f'Training loss: {loss.item()}')
 
 def test(X,y,model):
   
@@ -29,4 +32,4 @@ def test(X,y,model):
   pred = model(test_coeffs)
   loss = torch.nn.functional.mse_loss(pred, y)
 
-  print(loss)
+  print(f'Test loss: {loss}')
