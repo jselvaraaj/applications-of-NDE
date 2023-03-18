@@ -4,10 +4,15 @@ import torch.nn.functional as F
 
 class Policy:
 
-    def __init__(self, state_space_size,action_space_size,device) -> None:
+    def __init__(self, state_space_size,action_space_size,device= None) -> None:
         self.policy = PolicyNetwork(state_space_size,action_space_size)
         self.input_size = state_space_size
         self.output_size = action_space_size
+
+        if device is None:
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        else:
+            self.device = device
 
         self.policy.to(device)
 
