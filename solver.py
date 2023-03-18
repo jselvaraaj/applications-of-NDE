@@ -7,8 +7,10 @@ def train(X,y,model,num_epochs= 100,batch_size = 32,verbose = False, DE = False)
 
 
   if DE:
-    print("Making the X data continuous")
+    print("Started making the X data continuous")
     X = torchcde.hermite_cubic_coefficients_with_backward_differences(X)
+    print("Finished making the X data continuous")
+
 
   train_dataset = torch.utils.data.TensorDataset(X, y)
   train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size)

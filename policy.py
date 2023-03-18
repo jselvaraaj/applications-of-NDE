@@ -32,8 +32,8 @@ class PolicyNetwork(nn.Module):
     def __init__(self,state_space_size,action_space_size):
         super(PolicyNetwork, self).__init__()
 
-        self.fc1 = nn.Linear(state_space_size, 64)  
-        self.fc2 = nn.Linear(64, action_space_size)
+        self.fc1 = nn.Linear(state_space_size, 16)  
+        self.fc2 = nn.Linear(16, action_space_size)
         self.softmax = torch.nn.Softmax(dim=1)
 
     def forward(self, x):

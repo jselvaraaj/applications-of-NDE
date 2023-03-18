@@ -67,7 +67,7 @@ class DynamicsFunction(torch.nn.Module):
 
         self.evolve = torch.tensor(float(evolve)).to(device)
 
-        self.evolver = DegeneratedMarkovStateEvolver(input_channels,hidden_channels)
+        self.evolver = DegeneratedMarkovStateEvolver(hidden_channels,hidden_channels)
 
     def forward(self, coeffs):
         if self.interpolation == 'cubic':
@@ -77,15 +77,11 @@ class DynamicsFunction(torch.nn.Module):
         else:
             raise ValueError("Only 'linear' and 'cubic' interpolation methods are implemented.")
 
-        ######################
-        # Easy to forget gotcha: Initial hidden state should be a function of the first observation.
-        ######################
         X0 = X.evaluate(X.interval[0])
+
+    
         z0 = self.initial(X0)
 
-        ######################
-        # Actually solve the CDE.
-        ######################
         z_T = torchcde.cdeint(X=X,
                               z0=z0,
                               func=self.DEfunc,
@@ -96,11 +92,13 @@ class DynamicsFunction(torch.nn.Module):
         # and then apply a linear map.
         ######################
         z_T = z_T[:, 1]
-        pred_y = self.readout(z_T)
+        pred_y = z_T
         
         n = pred_y.shape[0]
         
         pred_y = torchdiffeq.odeint(self.evolver, pred_y, torch.stack((torch.tensor(0.0),self.evolve)).to(self.device))
+        
+        pred_y = self.readout(pred_y)
         
         return pred_y[1]
 
@@ -110,10 +108,12 @@ class NNBaseline(torch.nn.Module):
         super(NNBaseline, self).__init__()
 
         self.net = nn.Sequential(
-            nn.Linear(state_dim, hidden_channels),
+            nn.Linear(hidden_channels, hidden_channels),
             nn.Tanh(),
-            nn.Linear(hidden_channels, state_dim),
+            nn.Linear(hidden_channels, hidden_channels),
         )
+
+        self.readout = torch.nn.Linear(hidden_channels, state_dim)
 
         if device is None:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -124,6 +124,8 @@ class NNBaseline(torch.nn.Module):
 
         self.net.to(self.device)
 
+        self.rnn = nn.RNN(state_dim, hidden_channels, 1, batch_first=True)
+
 
         for m in self.net.modules():
             if isinstance(m, nn.Linear):
@@ -132,8 +134,39 @@ class NNBaseline(torch.nn.Module):
 
     def forward(self, y):
         
-        y = y[:,-1,:]
+        # y = y[:,-1,:]
+
+        output, hn = self.rnn(y)
+
+        y = hn[-1]
         for i in range(self.evolve):
             y = self.net(y)
 
+        y = self.readout(y)
+
         return y
+    
+# class Encoder(torch.nn.Module):
+#     def __init__(self, state_dim,hidden_channels,output_channels,device = None):
+#         super(NNBaseline, self).__init__()
+
+#         self.net = nn.Sequential(
+#             nn.Linear(state_dim, hidden_channels),
+#             nn.Tanh(),
+#             nn.Linear(hidden_channels, output_channels),
+#         )
+
+#         if device is None:
+#             self.device = "cuda" if torch.cuda.is_available() else "cpu"
+#         else:
+#             self.device = device
+
+#         self.net.to(self.device)
+
+#         for m in self.net.modules():
+#             if isinstance(m, nn.Linear):
+#                 nn.init.normal_(m.weight, mean=0, std=0.1)
+#                 nn.init.constant_(m.bias, val=0)
+
+#     def forward(self, x):
+#         return self.net(x)
