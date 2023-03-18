@@ -6,11 +6,12 @@ import policy
 
 class Experiment:
 
-    def __init__(self,baseline_policy,test_policy,env,episode_len,num_episodes,num_policy):
+    def __init__(self,baseline_policy,test_policy,env,evolve_len,episode_len,num_episodes,num_policy):
         self.baseline_policy = baseline_policy
         # self.data_collecting_policy = data_collecting_policy
         self.test_policy = test_policy
         self.env = env
+        self.evolove_len = evolve_len
         self.episode_len = episode_len
         self.num_episodes = num_episodes
         self.num_policy = num_policy
@@ -24,7 +25,7 @@ class Experiment:
         for i in range(self.num_policy):
             print(f"Generating data for policy {i+1}...")
             data_collecting_policy = policy.Policy(4,4)
-            X_, y_ = data_gen.get_X_y(data_collecting_policy,self.num_episodes,self.episode_len)
+            X_, y_ = data_gen.get_X_y(data_collecting_policy,self.num_episodes,self.episode_len,self.evolove_len)
             X.append(X_)
             y.append(y_)
         

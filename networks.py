@@ -49,7 +49,7 @@ class DynamicsTrajectoryDE(torch.nn.Module):
 
 
 class DynamicsFunction(torch.nn.Module):
-    def __init__(self, input_channels, hidden_channels, output_channels, interpolation="cubic", evolve = 5,device = None):
+    def __init__(self, input_channels, hidden_channels, output_channels, interpolation="cubic", evolve = 10,device = None):
         super(DynamicsFunction, self).__init__()
 
         self.initial = torch.nn.Linear(input_channels, hidden_channels)
@@ -99,12 +99,12 @@ class DynamicsFunction(torch.nn.Module):
         pred_y = torchdiffeq.odeint(self.evolver, pred_y, torch.stack((torch.tensor(0.0),self.evolve)).to(self.device))
         
         pred_y = self.readout(pred_y)
-        
+
         return pred_y[1]
 
 
 class NNBaseline(torch.nn.Module):
-    def __init__(self, state_dim,hidden_channels,evolve = 5,device = None):
+    def __init__(self, state_dim,hidden_channels,evolve = 10,device = None):
         super(NNBaseline, self).__init__()
 
         self.net = nn.Sequential(
@@ -126,6 +126,7 @@ class NNBaseline(torch.nn.Module):
 
         self.rnn = nn.RNN(state_dim, hidden_channels, 1, batch_first=True)
 
+        self.rnn.float()
 
         for m in self.net.modules():
             if isinstance(m, nn.Linear):
@@ -135,7 +136,7 @@ class NNBaseline(torch.nn.Module):
     def forward(self, y):
         
         # y = y[:,-1,:]
-
+        
         output, hn = self.rnn(y)
 
         y = hn[-1]

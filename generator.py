@@ -46,11 +46,11 @@ class DataGenerator:
 
         return data
 
-    def get_X_y(self, policy, n=10, t = 20):
+    def get_X_y(self, policy, n=10, t = 20,t_train_end=10):
 
         state_time_series = self.get_time_series(policy, n, t)
 
-        X = state_time_series[:,:-1]
+        X = state_time_series[:,:-t_train_end]
         y = state_time_series[:,-1]
 
-        return X,y
+        return X.float(),y.float()
