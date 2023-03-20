@@ -66,7 +66,7 @@ class GridWorldEnv(gym.Env):
       super().reset(seed=seed)
 
       # Choose the agent's location uniformly at random
-      self._agent_location = self.np_random.integers(0, self.size, size=2, dtype=int)
+      self._agent_location = self.np_random.integers(0, self.size*10, size=2, dtype=int)/10 # the 10 comes from action step is 0.1
 
     #   # We will sample the target's location randomly until it does not coincide with the agent's location
     #   self._target_location = self._agent_location
