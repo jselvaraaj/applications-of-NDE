@@ -7,7 +7,7 @@ from gymnasium.envs.registration import register
 class GridWorldEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
     
-    def __init__(self, render_mode=None, size=5):
+    def __init__(self, render_mode=None, size=5,step_size=0.1):
         self.size = size  # The size of the square grid
         self.window_size = 512  # The size of the PyGame window
 
@@ -24,17 +24,12 @@ class GridWorldEnv(gym.Env):
 
         # We have 4 actions, corresponding to "right", "up", "left", "down"
         self.action_space = spaces.Discrete(4)
-
-        """
-        The following dictionary maps abstract actions from `self.action_space` to
-        the direction we will walk in if that action is taken.
-        I.e. 0 corresponds to "right", 1 to "up" etc.
-        """
+        self.step_size = step_size
         self._action_to_direction = {
-            0: np.array([0.1, 0]),
-            1: np.array([0, 0.1]),
-            2: np.array([-0.1, 0]),
-            3: np.array([0, -0.1]),
+            0: np.array([step_size, 0]),
+            1: np.array([0, step_size]),
+            2: np.array([-step_size, 0]),
+            3: np.array([0, -step_size]),
         }
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
@@ -66,7 +61,7 @@ class GridWorldEnv(gym.Env):
       super().reset(seed=seed)
 
       # Choose the agent's location uniformly at random
-      self._agent_location = self.np_random.integers(0, self.size*10, size=2, dtype=int)/10 # the 10 comes from action step is 0.1
+      self._agent_location = self.np_random.integers(0, self.size*(1/self.step_size), size=2, dtype=int)*self.step_size
 
     #   # We will sample the target's location randomly until it does not coincide with the agent's location
     #   self._target_location = self._agent_location

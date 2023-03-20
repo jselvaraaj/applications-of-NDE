@@ -1,0 +1,42 @@
+{
+    "os": "Windows-10-10.0.22621-SP0",
+    "python": "3.9.15",
+    "heartbeatAt": "2023-03-20T13:38:21.784503",
+    "startedAt": "2023-03-20T13:38:20.243743",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "j:\\applications-of-NDE\\working_code\\applications-of-NDE\\main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": "https://github.com/josndan/applications-of-NDE.git",
+        "commit": "46c1a09ff06a48a6251eccec443f87caa13a98be"
+    },
+    "email": "jdselvaraaj@gmail.com",
+    "root": "J:/applications-of-NDE/working_code/applications-of-NDE",
+    "host": "DESKTOP-TJNQQ8T",
+    "username": "joeda",
+    "executable": "C:\\Users\\joeda\\anaconda3\\envs\\ADE_thesis\\python.exe",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 1298.0,
+        "min": 0.0,
+        "max": 1498.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1298.0,
+            "min": 0.0,
+            "max": 1498.0
+        }
+    ],
+    "disk": {
+        "total": 9.765621185302734,
+        "used": 3.594409942626953
+    },
+    "memory": {
+        "total": 15.595874786376953
+    }
+}
