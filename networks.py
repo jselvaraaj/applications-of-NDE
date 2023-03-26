@@ -31,8 +31,8 @@ class DynamicsTrajectoryDE(torch.nn.Module):
         self.input_channels = input_channels
         self.hidden_channels = hidden_channels
 
-        self.linear1 = torch.nn.Linear(hidden_channels, 32)
-        self.linear2 = torch.nn.Linear(32, input_channels * hidden_channels)      
+        self.linear1 = torch.nn.Linear(hidden_channels, 16)
+        self.linear2 = torch.nn.Linear(16, input_channels * hidden_channels)      
 
     def forward(self, t, z):
         z = self.linear1(z)

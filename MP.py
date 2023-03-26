@@ -21,7 +21,7 @@ class DegeneratedMarkovProcess:
 
 
     def get_obs(self):
-        return torch.hstack((self.observation,self.policy.weights))
+        return torch.hstack((self.observation,self.policy.weights.to(self.device)))
 
     def step(self):
         action = self.policy.get_action(self.observation)

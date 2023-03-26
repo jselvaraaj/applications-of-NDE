@@ -54,4 +54,4 @@ print("Number of parameters in baseline: ", utils.count_parameters(baseline_mode
 print("Number of parameters in test model: ", utils.count_parameters(test_model))
 
 
-# experiment.Experiment(baseline_model,test_model,world,evolve_len=evolve_len,episode_len=episode_len,num_episodes=num_episodes,num_policy=num_policy,logger_wrapper = logger_wrapper).run()
+experiment.Experiment(baseline_model,test_model,world,evolve_len=evolve_len,episode_len=episode_len,num_episodes=num_episodes,num_policy=num_policy,logger_wrapper = logger_wrapper).run()

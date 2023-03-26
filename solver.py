@@ -33,7 +33,7 @@ def train(X,y,model,num_epochs= 100,batch_size = 32,verbose = False, DE = False)
     
     wandb.log({"loss":loss.item()})
   
-  wandb.log_artifact(model)
+  # wandb.log_artifact(model)
 
 def test(X,y,model,DE=False):
   

@@ -1,0 +1,55 @@
+{
+    "os": "Linux-5.10.147+-x86_64-with-glibc2.31",
+    "python": "3.9.16",
+    "heartbeatAt": "2023-03-26T18:56:54.265718",
+    "startedAt": "2023-03-26T18:56:53.834430",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/content/drive/MyDrive/Neural_CDE/applications-of-NDE/main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": "https://josndan:@github.com//josndan/applications-of-NDE.git",
+        "commit": "59337727940e18fdb8319acc5de039cf5641499e"
+    },
+    "email": null,
+    "root": "/content/drive/MyDrive/Neural_CDE/applications-of-NDE",
+    "host": "154ab3a27517",
+    "username": "root",
+    "executable": "/usr/bin/python3",
+    "cpu_count": 1,
+    "cpu_count_logical": 2,
+    "cpu_freq": {
+        "current": 2299.998,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2299.998,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2299.998,
+            "min": 0.0,
+            "max": 0.0
+        }
+    ],
+    "disk": {
+        "total": 78.1898422241211,
+        "used": 25.637168884277344
+    },
+    "gpu": "Tesla T4",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "Tesla T4",
+            "memory_total": 16106127360
+        }
+    ],
+    "memory": {
+        "total": 12.681198120117188
+    }
+}

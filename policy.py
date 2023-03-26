@@ -36,12 +36,15 @@ class PolicyNetwork(nn.Module):
 
     def __init__(self,state_space_size,action_space_size):
         super(PolicyNetwork, self).__init__()
+        
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
-        self.fc1 = nn.Linear(state_space_size, 16)  
-        self.fc2 = nn.Linear(16, action_space_size)
+        self.fc1 = nn.Linear(state_space_size, 16).to(self.device) 
+        self.fc2 = nn.Linear(16, action_space_size).to(self.device) 
         self.softmax = torch.nn.Softmax(dim=1)
 
     def forward(self, x):
+        x = x.to(self.device)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.softmax(x)

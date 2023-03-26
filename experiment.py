@@ -55,7 +55,7 @@ class Experiment:
 
         print("\n\n")
 
-        with self.logger_wrapper.make_run(tages=["NDE","NCDE+NODE"]) as run:
+        with self.logger_wrapper.make_run(tags=["NDE","NCDE+NODE"]) as run:
             print("Test model")
             print("Training model...")
 
