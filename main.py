@@ -7,7 +7,7 @@ import solver
 import experiment
 from sklearn.model_selection import train_test_split
 import logger
-
+import utils
 
 logger_wrapper = logger.Logger()
 
@@ -50,5 +50,8 @@ logger_wrapper.config["episode_len"] = episode_len
 logger_wrapper.config["num_episodes"] = num_episodes
 logger_wrapper.config["num_policy"] = num_policy
 
+print("Number of parameters in baseline: ", utils.count_parameters(baseline_model))
+print("Number of parameters in test model: ", utils.count_parameters(test_model))
 
-experiment.Experiment(baseline_model,test_model,world,evolve_len=evolve_len,episode_len=episode_len,num_episodes=num_episodes,num_policy=num_policy,logger_wrapper = logger_wrapper).run()
+
+# experiment.Experiment(baseline_model,test_model,world,evolve_len=evolve_len,episode_len=episode_len,num_episodes=num_episodes,num_policy=num_policy,logger_wrapper = logger_wrapper).run()
