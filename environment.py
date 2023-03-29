@@ -7,7 +7,7 @@ from gymnasium.envs.registration import register
 class GridWorldEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
     
-    def __init__(self, render_mode=None, size=5,step_size=0.1):
+    def __init__(self, render_mode=None, size=5,step_size=1):
         self.size = size  # The size of the square grid
         self.window_size = 512  # The size of the PyGame window
 
@@ -44,6 +44,7 @@ class GridWorldEnv(gym.Env):
         """
         self.window = None
         self.clock = None
+        self.history = []
 
 
     def _get_obs(self):
@@ -63,12 +64,7 @@ class GridWorldEnv(gym.Env):
       # Choose the agent's location uniformly at random
       self._agent_location = self.np_random.integers(0, self.size*(1/self.step_size), size=2, dtype=int)*self.step_size
 
-    #   # We will sample the target's location randomly until it does not coincide with the agent's location
-    #   self._target_location = self._agent_location
-    #   while np.array_equal(self._target_location, self._agent_location):
-    #       self._target_location = self.np_random.integers(
-    #           0, self.size, size=2, dtype=int
-    #       )
+      self.history = [self._agent_location]
 
       observation = self._get_obs()
       info = self._get_info()
@@ -91,6 +87,8 @@ class GridWorldEnv(gym.Env):
       observation = self._get_obs()
       info = self._get_info()
 
+      self.history.append(self._agent_location)
+
       if self.render_mode == "human":
           self._render_frame()
 
@@ -111,10 +109,13 @@ class GridWorldEnv(gym.Env):
           self.clock = pygame.time.Clock()
 
       canvas = pygame.Surface((self.window_size, self.window_size))
+
       canvas.fill((255, 255, 255))
       pix_square_size = (
           self.window_size / self.size
       )  # The size of a single grid square in pixels
+
+      temp = pygame.Surface((pix_square_size, pix_square_size))
 
       # First we draw the target
       pygame.draw.rect(
@@ -125,6 +126,33 @@ class GridWorldEnv(gym.Env):
               (pix_square_size, pix_square_size),
           ),
       )
+
+      #history
+
+      if len(self.history) >= 2:
+        last = self.history[0]
+        for past_coord in self.history[1:]:
+          pygame.draw.rect(
+            canvas,
+            (0, 255, 0),
+            pygame.Rect(
+                pix_square_size * past_coord,
+                (pix_square_size, pix_square_size),
+            ),
+          )
+
+          pygame.draw.line(
+              canvas,
+              1,
+              (last + 0.5) * pix_square_size,
+              (past_coord + 0.5) * pix_square_size,
+              width=1,
+          )
+
+
+          last = past_coord
+
+      
       # Now we draw the agent
       pygame.draw.circle(
           canvas,
@@ -132,6 +160,8 @@ class GridWorldEnv(gym.Env):
           (self._agent_location + 0.5) * pix_square_size,
           pix_square_size / 3,
       )
+
+      
 
       # Finally, add some gridlines
       for x in range(self.size + 1):
