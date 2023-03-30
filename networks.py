@@ -68,7 +68,7 @@ class DynamicsFunction(torch.nn.Module):
 
         self.evolver = DegeneratedMarkovStateEvolver(hidden_channels,hidden_channels)
 
-    def forward(self, coeffs):
+    def forward(self, coeffs, evolove_len):
         if self.interpolation == 'cubic':
             X = torchcde.CubicSpline(coeffs)
         elif self.interpolation == 'linear':
@@ -95,7 +95,7 @@ class DynamicsFunction(torch.nn.Module):
         
         n = pred_y.shape[0]
         
-        pred_y = torchdiffeq.odeint(self.evolver, pred_y, torch.stack((torch.tensor(0.0),self.evolve)).to(self.device))
+        pred_y = torchdiffeq.odeint(self.evolver, pred_y, torch.stack((torch.tensor(0.0),evolove_len)).to(self.device))
         
         pred_y = self.readout(pred_y)
 
@@ -132,14 +132,14 @@ class NNBaseline(torch.nn.Module):
                 nn.init.normal_(m.weight, mean=0, std=0.1)
                 nn.init.constant_(m.bias, val=0)
 
-    def forward(self, y):
+    def forward(self, y,evolove_len):
         
         # y = y[:,-1,:]
         
         output, hn = self.rnn(y)
 
         y = hn[-1]
-        for i in range(self.evolve):
+        for i in range(evolove_len):
             y = self.net(y)
 
         y = self.readout(y)

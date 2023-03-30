@@ -31,17 +31,14 @@ class Experiment:
         obs_space_dim = self.logger_wrapper.config["observation_space_dim"]
         act_space_dim = self.logger_wrapper.config["action_space_dim"]
 
+        data_collecting_policies = []
         for i in range(self.num_policy):
-            print(f"Generating data for policy {i+1}...")
             data_collecting_policy = policy.Policy(obs_space_dim,act_space_dim)
-            X_, y_ = data_gen.get_X_y(data_collecting_policy,self.num_episodes,self.episode_len,self.evolove_len)
-            X.append(X_)
-            y.append(y_)
-        
-        X = torch.cat(X,dim=0)
-        y = torch.cat(y,dim=0)
+            data_collecting_policies.append(data_collecting_policy)
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, test_size=test_size)
+        X, y = data_gen.get_X_y(data_collecting_policies,self.num_episodes,self.episode_len,self.evolove_len)
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, test_size=test_size) # Will be generalizing over time as well
 
         print("\n\n")
 

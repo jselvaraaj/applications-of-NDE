@@ -46,11 +46,32 @@ class DataGenerator:
 
         return data
 
-    def get_X_y(self, policy, n=10, t = 20,t_train_end=10):
+    def get_X_y(self, policies, n=10, t = 20,t_train_end_from_last=10):
 
-        state_time_series = self.get_time_series(policy, n, t)
+        state_time_series = []
+        for i,policy in enumerate(policies):
+          print(f"Generating data for policy {i+1}...")
+          state_time_series.append(self.get_time_series(policy, n, t))
 
-        X = state_time_series[:,:-t_train_end]
-        y = state_time_series[:,-1]
+        state_time_series = torch.cat(state_time_series,dim=0)
 
-        return X.float(),y.float()
+        # X = state_time_series[:,:-t_train_end_from_last]
+        # y = state_time_series[:,-1]
+
+        X = []
+        y = []
+        # for t1 in range(0,t):
+        t1 = 0 # not looping for t1 as grid world is markovian
+        for t2 in range(t1+1,t):
+          for t3 in range(t2+1,t):
+            new_s_t = state_time_series[:,t1:t2]
+            # pred_time = torch.full((n,t2-t1+1,1),t3)
+
+            # new_s_t = torch.cat((state_time_series,pred_time),2)
+
+            pred = state_time_series[:,t3]
+
+            X.append((new_s_t.float(),t3))
+            y.append(pred.float())
+
+        return X,y
