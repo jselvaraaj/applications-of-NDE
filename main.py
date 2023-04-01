@@ -6,52 +6,51 @@ import torch
 import solver
 import experiment
 from sklearn.model_selection import train_test_split
-import logger
+import wandb
 import utils
 
-logger_wrapper = logger.Logger()
+wandb.init(
+            project="NDE_as_Mental_Models"
+        )
+
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 torch.set_default_tensor_type(torch.FloatTensor)
 
 size = 5
-step_size = 0.1
-world = GridWorldEnv(render_mode="rgb_array",size = size,step_size=step_size)
+world = GridWorldEnv(render_mode="rgb_array",size = size)
 
 observation_space_dim = 4
 action_space_dim = 4
 
 data_collecting_policy = policy.Policy(observation_space_dim,action_space_dim)
 
+print("data collecting policy total parameters - ", data_collecting_policy.weights.shape[0])
 degenerated_state_space_dim = observation_space_dim + data_collecting_policy.weights.shape[0]
-print("Degenerated State space dim: ",degenerated_state_space_dim)
+print("Degenerated State space dim - ",degenerated_state_space_dim)
 
-evolve_len = 10
 hidden_layer_size = 8
 
-baseline_model = networks.NNBaseline(degenerated_state_space_dim, hidden_layer_size,evolve=evolve_len)
+baseline_model = networks.NNBaseline(degenerated_state_space_dim, hidden_layer_size)
 baseline_model.to(device)
-
-test_model = networks.DynamicsFunction(input_channels=degenerated_state_space_dim, hidden_channels=hidden_layer_size, output_channels=degenerated_state_space_dim,evolve=evolve_len)
+test_model = networks.DynamicsFunction(degenerated_state_space_dim, hidden_layer_size)
 test_model.to(device)
 
 episode_len=80
 num_episodes=10
-num_policy=5
+num_policy=10
 
-logger_wrapper.config["grid_size"] = size
-logger_wrapper.config["grid_step_size"] = step_size
-logger_wrapper.config["observation_space_dim"] = observation_space_dim
-logger_wrapper.config["action_space_dim"] = action_space_dim
-logger_wrapper.config["degenerated_state_space_dim"] = degenerated_state_space_dim
-logger_wrapper.config["evolve_len"] = 10
-logger_wrapper.config["hidden_layer_size"] = hidden_layer_size
-logger_wrapper.config["episode_len"] = episode_len
-logger_wrapper.config["num_episodes"] = num_episodes
-logger_wrapper.config["num_policy"] = num_policy
+wandb.config.grid_size = size
+wandb.config.observation_space_dim = observation_space_dim
+wandb.config.action_space_dim = action_space_dim
+wandb.config.degenerated_state_space_dim = degenerated_state_space_dim
+wandb.config.hidden_layer_size = hidden_layer_size
+wandb.config.episode_len = episode_len
+wandb.config.num_episodes = num_episodes
+wandb.config.num_policy = num_policy
 
 print("Number of parameters in baseline: ", utils.count_parameters(baseline_model))
 print("Number of parameters in test model: ", utils.count_parameters(test_model))
 
 
-experiment.Experiment(baseline_model,test_model,world,evolve_len=evolve_len,episode_len=episode_len,num_episodes=num_episodes,num_policy=num_policy,logger_wrapper = logger_wrapper).run()
+experiment.Experiment(baseline_model,test_model,world,episode_len=episode_len,num_episodes=num_episodes,num_policy=num_policy).run()

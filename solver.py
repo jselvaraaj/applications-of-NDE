@@ -1,47 +1,65 @@
 import torch
 import torchcde
 import wandb
+from custom_dataset import EpisodesDataset
+from utils import shuffle
 
-def train(X,y,model,num_epochs= 100,batch_size = 32,verbose = False, DE = False):
-
+def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 32,verbose = False):
   optimizer = torch.optim.Adam(model.parameters())
 
-
-  for i in range(X):
-
-    if DE:
-      print("Started making the X data continuous")
-      X[i] = torchcde.hermite_cubic_coefficients_with_backward_differences(X[i][0]),X[i][1]
-      print("Finished making the X data continuous")
-
-    evolve_len = X[i][1]
-    train_dataset = torch.utils.data.TensorDataset(X[i][0], y[i])
-    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size)
-    for epoch in range(num_epochs):
-      if verbose:
-        print(f'Epoch: {epoch}',end=' ')
-      for batch in train_dataloader:
-        batch_X, batch_y = batch
-
-        pred_y = model(batch_X,evolve_len).squeeze(-1)
-
-        loss = torch.nn.functional.mse_loss(pred_y, batch_y)
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
-
-      if verbose:
-        print(f'Training loss: {loss.item()}')
+  train_dataset = EpisodesDataset(train_dataset)
+  train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size)
+  for epoch in range(num_epochs):
+    if verbose:
+      print(f'Epoch: {epoch}',end=' ')
+    for batch in train_dataloader:
+      batch_X, batch_y, evolve_lens = batch
       
-      wandb.log({"loss":loss.item()})
+      print(batch_X.shape)
+      print(batch_y.shape)
+      print(evolve_lens.shape)
+      raise Exception
+      
+      train_loss = 0
+      for i,[evolve_len] in enumerate(evolve_lens):
+        X,y = shuffle(batch_X[i],batch_y[i])
+
+        pred_y = model(X,evolve_len).squeeze(-1)
+
+        loss = torch.nn.functional.mse_loss(pred_y, y)
+        train_loss += loss.item()
+        loss.backward()
     
-  # wandb.log_artifact(model)
+      optimizer.step()
+      optimizer.zero_grad()
 
-def test(X,y,model,DE=False):
+    if verbose:
+      print(f'Training loss: {train_loss}')
+
+      val_loss = 0
+      for evolve_len in val_dataset:
+        X,y = val_dataset[evolve_len]
+        pred_y = model(X,evolve_len).squeeze(-1)
+        val_loss += torch.nn.functional.mse_loss(pred_y, y).item()
+
+      print(f'Validation loss: {val_loss}')
+      
+    wandb.log({"Training loss":train_loss},step=epoch)
+    wandb.log({"Validation loss":val_loss},step=epoch)
+
+  # torch.save(model.state_dict(), 'model.pth')
+  # wandb.save('model.pth')
+
+def test(test_dataset, model):
+  test_loss = 0
+  for evolve_len in test_dataset:
+    X,y = test_dataset[evolve_len]
+    pred_y = model(X,evolve_len).squeeze(-1)
+    test_loss += torch.nn.functional.mse_loss(pred_y, y).item()
+
+  print(f'Validation loss: {test_loss}')
   
-  if DE:
-    X = torchcde.hermite_cubic_coefficients_with_backward_differences(X)
-  pred = model(X)
-  loss = torch.nn.functional.mse_loss(pred, y)
+  wandb.log({"Test loss":test_loss})
 
-  print(f'Test loss: {loss}')
+
+
