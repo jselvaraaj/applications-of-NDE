@@ -1,24 +1,19 @@
 import torch
 import copy
+import utils
 
 class DegeneratedMarkovProcess:
 
-    def __init__(self,env,policy,device=None) -> None:
+    def __init__(self,env,policy) -> None:
         self.env = copy.deepcopy(env)
         self.policy = policy
-
-        if device is None:
-            self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        else:
-            self.device = device
-
+        self.device = utils.get_device()
         self.observation = None
         self.reset()
 
     def reset(self):
         self.env.reset()
         self.observation = torch.from_numpy(self.env._get_obs()[0]).to(self.device)
-
 
     def get_obs(self):
         return torch.hstack((self.observation,self.policy.weights.to(self.device)))

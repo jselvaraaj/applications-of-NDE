@@ -10,35 +10,37 @@ import wandb
 import utils
 
 wandb.init(
-            project="NDE_as_Mental_Models"
+            project="NDE_as_Mental_Models",
+            tags=["NODE"]
         )
 
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = utils.get_device()
 torch.set_default_tensor_type(torch.FloatTensor)
 
-size = 5
+print("Device: ",device)
+
+size = 100
 world = GridWorldEnv(render_mode="rgb_array",size = size)
 
-observation_space_dim = 4
-action_space_dim = 4
+observation_space_dim = 4 # not a hyperparameter
+action_space_dim = 4 # not a hyperparameter
 
+#This is only used for getting the total number paramaeters in policy
 data_collecting_policy = policy.Policy(observation_space_dim,action_space_dim)
 
 print("data collecting policy total parameters - ", data_collecting_policy.weights.shape[0])
 degenerated_state_space_dim = observation_space_dim + data_collecting_policy.weights.shape[0]
 print("Degenerated State space dim - ",degenerated_state_space_dim)
 
-hidden_layer_size = 8
+hidden_layer_size = 32
 
-baseline_model = networks.NNBaseline(degenerated_state_space_dim, hidden_layer_size)
-baseline_model.to(device)
-test_model = networks.DynamicsFunction(degenerated_state_space_dim, hidden_layer_size)
+test_model = networks.DynamicsFunction(degenerated_state_space_dim, hidden_layer_size,observation_space_dim)
 test_model.to(device)
 
 episode_len=80
-num_episodes=10
-num_policy=10
+num_episodes=100
+num_policy=100
+num_epochs = 100
 
 wandb.config.grid_size = size
 wandb.config.observation_space_dim = observation_space_dim
@@ -48,9 +50,9 @@ wandb.config.hidden_layer_size = hidden_layer_size
 wandb.config.episode_len = episode_len
 wandb.config.num_episodes = num_episodes
 wandb.config.num_policy = num_policy
+wandb.config.num_epochs = num_epochs
 
-print("Number of parameters in baseline: ", utils.count_parameters(baseline_model))
 print("Number of parameters in test model: ", utils.count_parameters(test_model))
 
-
-experiment.Experiment(baseline_model,test_model,world,episode_len=episode_len,num_episodes=num_episodes,num_policy=num_policy).run()
+exp = experiment.Experiment(world,episode_len=episode_len,num_episodes=num_episodes,num_policy=num_policy,num_epochs=num_epochs)
+exp.run(test_model)
