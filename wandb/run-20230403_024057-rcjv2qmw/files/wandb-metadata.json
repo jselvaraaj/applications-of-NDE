@@ -1,0 +1,171 @@
+{
+    "os": "Linux-5.4.0-126-generic-x86_64-with-glibc2.31",
+    "python": "3.9.13",
+    "heartbeatAt": "2023-04-03T02:40:58.611147",
+    "startedAt": "2023-04-03T02:40:57.908827",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "baseline=False"
+    ],
+    "state": "running",
+    "program": "/home/jselvaraaj_umass_edu/applications-of-NDE/main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": "https://josndan:@github.com//josndan/applications-of-NDE.git",
+        "commit": "51c99b6d4f157dc843c352aa945857b1c965b00e"
+    },
+    "email": "jdselvaraaj@gmail.com",
+    "root": "/home/jselvaraaj_umass_edu/applications-of-NDE",
+    "host": "ials-gpu007",
+    "username": "jselvaraaj_umass_edu",
+    "executable": "/modules/apps/conda-environments/anaconda-2022.10/bin/python",
+    "cpu_count": 24,
+    "cpu_count_logical": 24,
+    "cpu_freq": {
+        "current": 2.504,
+        "min": 1000.0,
+        "max": 3500.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2.901,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.834,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.935,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.859,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.899,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.823,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.903,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.862,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.87,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.951,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.873,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.878,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.721,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.71,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.71,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.91,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.92,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.929,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.925,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        }
+    ],
+    "disk": {
+        "total": 438.5487174987793,
+        "used": 16.441238403320312
+    },
+    "gpu": "NVIDIA GeForce RTX 2080 Ti",
+    "gpu_count": 2,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 2080 Ti",
+            "memory_total": 11811160064
+        },
+        {
+            "name": "NVIDIA GeForce RTX 2080 Ti",
+            "memory_total": 11811160064
+        }
+    ],
+    "memory": {
+        "total": 187.56361389160156
+    }
+}

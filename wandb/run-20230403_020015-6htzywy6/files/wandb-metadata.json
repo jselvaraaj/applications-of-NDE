@@ -1,0 +1,177 @@
+{
+    "os": "Linux-5.4.0-126-generic-x86_64-with-glibc2.31",
+    "python": "3.9.13",
+    "heartbeatAt": "2023-04-03T02:00:16.567289",
+    "startedAt": "2023-04-03T02:00:15.833290",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/jselvaraaj_umass_edu/applications-of-NDE/main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": "https://josndan:@github.com//josndan/applications-of-NDE.git",
+        "commit": "ac1a5371ea0b092928327d3de0cc6dc5a7f01e5a"
+    },
+    "email": "jdselvaraaj@gmail.com",
+    "root": "/home/jselvaraaj_umass_edu/applications-of-NDE",
+    "host": "ials-gpu007",
+    "username": "jselvaraaj_umass_edu",
+    "executable": "/modules/apps/conda-environments/anaconda-2022.10/bin/python",
+    "cpu_count": 24,
+    "cpu_count_logical": 24,
+    "cpu_freq": {
+        "current": 1.3792083333333334,
+        "min": 1000.0,
+        "max": 3500.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3.299,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 0.999,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.085,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.789,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.759,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 2.809,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.097,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.001,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.179,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        },
+        {
+            "current": 1.0,
+            "min": 1000.0,
+            "max": 3500.0
+        }
+    ],
+    "disk": {
+        "total": 438.5487174987793,
+        "used": 16.441219329833984
+    },
+    "gpu": "NVIDIA GeForce RTX 2080 Ti",
+    "gpu_count": 4,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 2080 Ti",
+            "memory_total": 11811160064
+        },
+        {
+            "name": "NVIDIA GeForce RTX 2080 Ti",
+            "memory_total": 11811160064
+        },
+        {
+            "name": "NVIDIA GeForce RTX 2080 Ti",
+            "memory_total": 11811160064
+        },
+        {
+            "name": "NVIDIA GeForce RTX 2080 Ti",
+            "memory_total": 11811160064
+        }
+    ],
+    "memory": {
+        "total": 187.56361389160156
+    }
+}

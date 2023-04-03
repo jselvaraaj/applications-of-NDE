@@ -1,0 +1,2 @@
+default:
+  -model: baseline_neural_network

@@ -9,23 +9,29 @@ import os.path
 
 class Experiment:
 
-    def __init__(self,env,episode_len,num_episodes,num_policy,num_epochs,cache=False):
+    def __init__(self,env,episode_len,num_episodes,num_policy,num_epochs,use_cache=False):
         self.env = env
         self.episode_len = episode_len
         self.num_episodes = num_episodes
         self.num_policy = num_policy
         self.num_epochs = num_epochs
-        self.cache = cache
+        self.use_cache = use_cache
 
         self.get_data()
 
     def get_data(self):
-      if os.path.isfile('data_for_exp.pkl') and self.cache:
+      if os.path.isfile('data_for_exp.pkl') and self.use_cache:
         print("Reading from cache")
-        (self.train_dataset,self.val_dataset,self.test_dataset) = pickle.load(open('data_for_exp.pkl', 'rb'))
+        
+        with open("data_for_exp.pkl", "rb") as f:
+            (self.train_dataset,self.val_dataset,self.test_dataset) = pickle.load(f)
+        
       else:
         self.gen_data()
-        pickle.dump((self.train_dataset,self.val_dataset,self.test_dataset), open('data_for_exp.pkl', 'wb'))
+        
+        # with open("data_for_exp.pkl", "wb") as f:
+        #     pickle.dump((self.train_dataset,self.val_dataset,self.test_dataset), f, protocol=pickle.HIGHEST_PROTOCOL)
+            
 
     def gen_data(self):
         print("Generating data...")

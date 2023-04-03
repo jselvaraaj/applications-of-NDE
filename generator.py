@@ -45,10 +45,16 @@ class DataGenerator:
 
         return data
 
-    def get_X_y(self, policies, n, t, train_split, val_split, test_split,obs_space_dim = 4):
-
-        train_policies, test_policies = utils.split(policies,train_split)
-        test_policies,val_policies = utils.split(test_policies,test_split/(test_split+val_split))
+    def get_X_y(self, policies, n, t, train_split, val_split, test_split,obs_space_dim = 4,visualize=False,test_policy_generalization=False):
+        
+        if test_policy_generalization:
+            train_policies, test_policies = utils.split(policies,train_split)
+            test_policies,val_policies = utils.split(test_policies,test_split/(test_split+val_split))
+        else:
+            train_policies, test_policies = utils.split(policies,train_split)
+            test_policies,val_policies = utils.split(test_policies,test_split/(test_split+val_split))
+            
+            train_policies = policies
 
         state_time_series_train = []
         for i,policy in enumerate(train_policies):
@@ -74,20 +80,21 @@ class DataGenerator:
         state_time_series_test = torch.cat(state_time_series_test,dim=0)
         print()
 
+        
+        if visualize:
+            print("Visualize ...")
 
-        print("Visualize ...")
+            print('\nTrain Policy')
+            utils.visualize_policy(self.env,train_policies[0],t,'train')
+            print()        
 
-        print('\nTrain Policy')
-        utils.visualize_policy(self.env,train_policies[0],t,'train')
-        print()        
+            print('\nValidation Policy')
+            utils.visualize_policy(self.env,val_policies[0],t,'val')
+            print()
 
-        print('\nValidation Policy')
-        utils.visualize_policy(self.env,val_policies[0],t,'val')
-        print()
-
-        print('\nTest Policy')
-        utils.visualize_policy(self.env,val_policies[0],t,'test')
-        print()
+            print('\nTest Policy')
+            utils.visualize_policy(self.env,val_policies[0],t,'test')
+            print()
 
         possible_evolve_lengths = list(range(1,t))
 

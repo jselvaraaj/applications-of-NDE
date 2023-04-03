@@ -9,7 +9,7 @@ def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 32,verbo
 
   train_dataset = EpisodesDataset(train_dataset)
   train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size)
-  for epoch in range(num_epochs):
+  for epoch in range(int(num_epochs)):
     if verbose:
       print(f'Epoch: {epoch}',end=' ')
     model.train()
