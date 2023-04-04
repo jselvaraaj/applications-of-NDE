@@ -38,7 +38,7 @@ def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 32,verbo
         val_loss += torch.nn.functional.mse_loss(pred_y, y).item()
 
     if verbose:
-      print(f'Training loss: {train_loss}')
+      print(f'Training loss: {train_loss}',end='\t')
       print(f'Validation loss: {val_loss}')
 
     wandb.log({"Validation loss":val_loss},step=epoch)
