@@ -3,6 +3,8 @@ from MP import DegeneratedMarkovProcess
 from sklearn.model_selection import train_test_split
 import utils
 import wandb
+import random
+import numpy as np
 
 class DataGenerator:
 
@@ -51,8 +53,8 @@ class DataGenerator:
                     
             if len(video_name) and i in visualize_epi:
                 wandb.log(
-                  {f"{video_name}_i": wandb.Video(frames, fps=framerate, format="mp4")})
-
+                  {f"{video_name}_i": wandb.Video(np.transpose(np.asarray(frames),(0,3,1,2)), fps=framerate, format="mp4")})
+                
             episode = torch.stack(episode,dim=0)
             data.append(episode)
 
@@ -74,7 +76,7 @@ class DataGenerator:
             train_policies = policies
             
         number_of_policies_to_visualize = 5
-        visualize_policies = set(random.sample(list(range(len(train_policies))),number_of_policies_to_visualize))
+        visualize_policies = set(random.sample(list(range(len(train_policies))),min(number_of_policies_to_visualize,len(train_policies))))
 
         state_time_series_train = []
         for i,policy in enumerate(train_policies):
@@ -82,34 +84,38 @@ class DataGenerator:
           if i not in visualize_policies:
               state_time_series_train.append(self.get_time_series(policy, n, t))
           else:
+              print("Logging this policy")
               state_time_series_train.append(self.get_time_series(policy, n, t,video_name=f"train_{i}"))
                 
           print()
         state_time_series_train = torch.cat(state_time_series_train,dim=0)
         print()
         
-        visualize_policies = set(random.sample(list(range(len(val_policies))),number_of_policies_to_visualize))
+        visualize_policies = set(random.sample(list(range(len(val_policies))),min(number_of_policies_to_visualize,len(val_policies))))
 
         state_time_series_val = []
         for i,policy in enumerate(val_policies):
           print(f"Validation policy {i+1}...")
           if i not in visualize_policies:
-              state_time_series_train.append(self.get_time_series(policy, n, t))
+              state_time_series_val.append(self.get_time_series(policy, n, t))
           else:
-              state_time_series_train.append(self.get_time_series(policy, n, t,video_name=f"val_{i}"))
+              print("Logging this policy")
+            
+              state_time_series_val.append(self.get_time_series(policy, n, t,video_name=f"val_{i}"))
           print()
         state_time_series_val = torch.cat(state_time_series_val,dim=0)
         print()
         
-        visualize_policies = set(random.sample(list(range(len(test_policies))),number_of_policies_to_visualize))
+        visualize_policies = set(random.sample(list(range(len(test_policies))),min(number_of_policies_to_visualize,len(test_policies))))
 
         state_time_series_test = []
         for i,policy in enumerate(test_policies):
           print(f"Test policy {i+1}...")
           if i not in visualize_policies:
-              state_time_series_train.append(self.get_time_series(policy, n, t))
+              state_time_series_test.append(self.get_time_series(policy, n, t))
           else:
-              state_time_series_train.append(self.get_time_series(policy, n, t,video_name=f"test_{i}"))
+              print("Logging this policy")
+              state_time_series_test.append(self.get_time_series(policy, n, t,video_name=f"test_{i}"))
           print()
         state_time_series_test = torch.cat(state_time_series_test,dim=0)
         print()
