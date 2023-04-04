@@ -6,6 +6,7 @@ import policy
 import wandb
 import pickle
 import os.path
+import utils
 
 class Experiment:
 
@@ -34,7 +35,6 @@ class Experiment:
             
 
     def gen_data(self):
-        print("Generating data...")
         data_gen = generator.DataGenerator(self.env)
         train_split, val_split, test_split = 0.8,0.1,0.1
         X, y = [],[]
@@ -45,12 +45,18 @@ class Experiment:
 
         obs_space_dim = wandb.config.observation_space_dim
         act_space_dim = wandb.config.action_space_dim
-
+        grid_size = wandb.config.grid_size
+        
+        print("Aligning policy")
         data_collecting_policies = []
         for i in range(self.num_policy):
             data_collecting_policy = policy.Policy(obs_space_dim,act_space_dim)
+            
+            data_collecting_policy = utils.align_policy(data_collecting_policy,grid_size)
+            
             data_collecting_policies.append(data_collecting_policy)
-
+        
+        print("Generating episode data...")
         self.train_dataset, self.val_dataset, self.test_dataset = data_gen.get_X_y(data_collecting_policies,self.num_episodes,self.episode_len,train_split, val_split, test_split,obs_space_dim=obs_space_dim)
         
         print("\n\n")
