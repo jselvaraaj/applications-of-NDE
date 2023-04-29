@@ -4,6 +4,7 @@ import torch
 import mediapy as media
 import time
 import numpy as np
+import wandb
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -26,7 +27,7 @@ def shuffle(X,y):
 def get_device():
     return "cuda" if torch.cuda.is_available() else "cpu"
 
-def align_policy(policy,grid_size,epochs=1e4):
+def align_policy(policy,grid_size,epochs=1e3):
     device = get_device()
     
     # policy.policy.train()
@@ -52,10 +53,32 @@ def align_policy(policy,grid_size,epochs=1e4):
         loss.backward()
         optimizer.step()
         
-    print(loss.item())
+        if (i+1) % (epochs/10) == 0:
+            print(f"Epoch {i+1}, Loss ", loss.item())
+            
         
     return policy
 
+def visualize_policy(world,policy,epi_len,video_name):
+    world.reset()
+    
+    device = get_device()
+
+    framerate = 5 
+    frames = []
+
+    for t in range(epi_len):
+        frame = world.render()
+
+        frames.append(frame)
+        action = policy.get_action(torch.from_numpy(world._get_obs()[0]).to(device))
+        observation, reward, terminated, truncated, info = world.step(action)
+
+        if terminated:
+            print("Finished after {} timesteps".format(t+1))
+            break
+
+    wandb.log({f"{video_name}": wandb.Video(np.transpose(np.asarray(frames),(0,3,1,2)), fps=framerate, format="mp4")})
     
     
     

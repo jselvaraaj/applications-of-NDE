@@ -4,7 +4,7 @@ import wandb
 from custom_dataset import EpisodesDataset
 from utils import shuffle
 
-def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 32,verbose = False):
+def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 16,verbose = False):
     optimizer = torch.optim.Adam(model.parameters())
 
     train_dataset = EpisodesDataset(train_dataset)
@@ -24,7 +24,6 @@ def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 32,verbo
                 X,y = shuffle(batch_X[i],batch_y[i])
 
                 pred_y = model(X,evolve_len).squeeze(-1)
-                
                 preds.append(pred_y)
                 ys.append(y)
             
@@ -44,7 +43,8 @@ def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 32,verbo
             for evolve_len in val_dataset:
                 X,y = val_dataset[evolve_len]
                 pred_y = model(X,evolve_len).squeeze(-1)
-                
+                print(pred_y)
+                print(y)               
                 preds.append(pred_y)
                 ys.append(y)
             
@@ -58,7 +58,8 @@ def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 32,verbo
 
         wandb.log({"Validation loss":val_loss},step=epoch)
         wandb.log({"Training loss":train_loss},step=epoch)
-
+    
+    model.save(os.path.join(wandb.run.dir, "node.model"))
   # torch.save(model.state_dict(), 'model.pth')
   # wandb.save('model.pth')
 

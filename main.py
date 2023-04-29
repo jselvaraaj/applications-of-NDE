@@ -17,7 +17,6 @@ def main(cfg: DictConfig):
     
     baseline = cfg.baseline
     
-    print("baseline", type(baseline))
     
     if baseline:
         tags = ["Neural_Network_Baseline"]

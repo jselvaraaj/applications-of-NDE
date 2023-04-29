@@ -1,7 +1,0 @@
-baseline: true
-grid_size: 100
-hidden_layer_size: 32
-episode_len: 80
-num_episodes: 100
-num_policy: 100
-num_epochs: 10000.0

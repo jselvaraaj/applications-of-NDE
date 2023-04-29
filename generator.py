@@ -41,7 +41,7 @@ class DataGenerator:
                 terminated = dmp.step() 
 
                 if terminated: # Happens iff agent reachs target
-                    print(f"Finished after {j+1} timesteps")
+                    print(f"{i}th episode Finished after {j+1} timesteps")
                     break
                 
                 observation = dmp.get_obs()
@@ -53,7 +53,7 @@ class DataGenerator:
                     
             if len(video_name) and i in visualize_epi:
                 wandb.log(
-                  {f"{video_name}_i": wandb.Video(np.transpose(np.asarray(frames),(0,3,1,2)), fps=framerate, format="mp4")})
+                  {f"{video_name}_{i}": wandb.Video(np.transpose(np.asarray(frames),(0,3,1,2)), fps=framerate, format="mp4")})
                 
             episode = torch.stack(episode,dim=0)
             data.append(episode)

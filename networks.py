@@ -5,6 +5,7 @@ import math
 import torchcde
 import torchdiffeq
 import utils
+import torchvision
 
 
 class DegeneratedMarkovStateEvolver(torch.nn.Module):
@@ -12,19 +13,21 @@ class DegeneratedMarkovStateEvolver(torch.nn.Module):
         super(DegeneratedMarkovStateEvolver, self).__init__()
 
         self.device = utils.get_device()
-
+        
+        # model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=False)
         self.net = nn.Sequential(
-            nn.Linear(input_channels, hidden_channels),
-            nn.Tanh(),
-            nn.Linear(hidden_channels, input_channels),
-        ).to(self.device)
+        nn.Linear(input_channels, hidden_channels),
+        nn.Tanh(),
+        nn.Linear(hidden_channels, input_channels)).to(self.device)
 
-        for m in self.net.modules():
-            if isinstance(m, nn.Linear):
-                nn.init.normal_(m.weight, mean=0, std=0.1)
-                nn.init.constant_(m.bias, val=0)
+        # for m in self.net.modules():
+        #     if isinstance(m, nn.Linear):
+        #         nn.init.normal_(m.weight, mean=0, std=0.1)
+        #         nn.init.constant_(m.bias, val=0)
 
     def forward(self, t, y):
+        # n,_ =y.shape
+        # return self.net(y.reshape((n,128,-1)))
         return self.net(y)
 
 class DynamicsFunction(torch.nn.Module):
@@ -69,11 +72,7 @@ class NNBaseline(torch.nn.Module):
             nn.Linear(hidden_channels, hidden_channels),
         ).to(self.device)
 
-        self.net = nn.Sequential(
-            nn.Linear(hidden_channels, hidden_channels),
-            nn.Tanh(),
-            nn.Linear(hidden_channels, hidden_channels),
-        ).to(self.device)
+        self.net = DegeneratedMarkovStateEvolver(hidden_channels,hidden_channels).to(self.device)
 
         self.readout = nn.Sequential(
             nn.Linear(hidden_channels, hidden_channels),
@@ -89,7 +88,7 @@ class NNBaseline(torch.nn.Module):
     def forward(self, x,evolove_len):
         hidden_representation = self.readin(x)
         for i in range(evolove_len):
-            hidden_representation = self.net(hidden_representation)
+            hidden_representation = self.net(None,hidden_representation)
         x = self.readout(hidden_representation)
         return x
   

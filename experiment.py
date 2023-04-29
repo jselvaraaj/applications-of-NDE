@@ -52,7 +52,9 @@ class Experiment:
         for i in range(self.num_policy):
             data_collecting_policy = policy.Policy(obs_space_dim,act_space_dim)
             
+            print(f"Policy {i+1}")
             data_collecting_policy = utils.align_policy(data_collecting_policy,grid_size)
+            # utils.visualize_policy(self.env, data_collecting_policy,80,f"policy_{i+1}")
             
             data_collecting_policies.append(data_collecting_policy)
         
