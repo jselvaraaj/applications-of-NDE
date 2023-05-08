@@ -1,10 +1,12 @@
 baseline: True
 
+load: False
+
 grid_size: 100
 
 hidden_layer_size: 32
 episode_len: 10
 num_episodes: 20
 num_policy: 10
-num_epochs: 1e3
+num_epochs: 3e3
 

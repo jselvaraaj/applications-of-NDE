@@ -34,7 +34,11 @@ def align_policy(policy,grid_size,epochs=1e3):
     
     optimizer = torch.optim.Adam(policy.policy.parameters())
     
-    y = torch.nn.functional.one_hot(torch.flatten(torch.randint(0,4,(grid_size,grid_size),device=device))).to(torch.float)
+    # y = torch.nn.functional.one_hot(torch.flatten(torch.randint(0,4,(grid_size,grid_size),device=device))).to(torch.float)
+
+    y = torch.nn.functional.one_hot(torch.flatten(torch.full((grid_size,grid_size),3,device=device))).to(torch.float)
+    
+    # print(y)
     
     state = torch.from_numpy(np.asarray(list(np.ndindex(grid_size,grid_size)))).to(torch.float).to(device)
     

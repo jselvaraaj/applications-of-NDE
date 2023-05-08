@@ -10,13 +10,13 @@ import wandb
 import utils
 import hydra
 from omegaconf import DictConfig, OmegaConf
-
+from non_int_env import NonIntTransistion
 
 @hydra.main(version_base=None, config_path="conf",config_name="config")
 def main(cfg: DictConfig):
     
     baseline = cfg.baseline
-    
+    load = cfg.load
     
     if baseline:
         tags = ["Neural_Network_Baseline"]
@@ -35,6 +35,7 @@ def main(cfg: DictConfig):
 
     size = cfg.grid_size
     world = GridWorldEnv(render_mode="rgb_array",size = size)
+    # world = NonIntTransistion(render_mode="rgb_array",size = size)
 
     observation_space_dim = 4 # not a hyperparameter
     action_space_dim = 4 # not a hyperparameter
@@ -66,6 +67,9 @@ def main(cfg: DictConfig):
     if baseline:
         model = networks.NNBaseline(degenerated_state_space_dim, hidden_layer_size,observation_space_dim)
         print("Number of parameters in baseline: ", utils.count_parameters(model))
+        if load:
+            print("Loaded Model")
+            model.load_state_dict(torch.load(r'./wandb/run-20230506_190751-4lkt2k1s/files/exp.model'))
     else:
         model = networks.DynamicsFunction(degenerated_state_space_dim, hidden_layer_size,observation_space_dim)
         print("Number of parameters in NODE: ", utils.count_parameters(model))

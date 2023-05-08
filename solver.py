@@ -3,6 +3,7 @@ import torchcde
 import wandb
 from custom_dataset import EpisodesDataset
 from utils import shuffle
+import os
 
 def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 16,verbose = False):
     optimizer = torch.optim.Adam(model.parameters())
@@ -20,12 +21,21 @@ def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 16,verbo
             train_loss = 0
             preds = []
             ys = []
+            once = True
             for i,[evolve_len] in enumerate(evolve_lens):
                 X,y = shuffle(batch_X[i],batch_y[i])
 
                 pred_y = model(X,evolve_len).squeeze(-1)
                 preds.append(pred_y)
                 ys.append(y)
+                
+                if epoch >= num_epochs - 20 and once:
+                    print('t',evolve_len)
+                    print('X',X[:10])
+                    print('pred_y', pred_y[:10])
+                    print('y',y[:10])
+                    once = False
+                    # exit(0)
             
             preds = torch.stack(preds,dim = 0)
             ys = torch.stack(ys,dim=0)
@@ -42,9 +52,7 @@ def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 16,verbo
             ys = []
             for evolve_len in val_dataset:
                 X,y = val_dataset[evolve_len]
-                pred_y = model(X,evolve_len).squeeze(-1)
-                print(pred_y)
-                print(y)               
+                pred_y = model(X,evolve_len).squeeze(-1)           
                 preds.append(pred_y)
                 ys.append(y)
             
@@ -59,8 +67,9 @@ def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 16,verbo
         wandb.log({"Validation loss":val_loss},step=epoch)
         wandb.log({"Training loss":train_loss},step=epoch)
     
-    model.save(os.path.join(wandb.run.dir, "node.model"))
-  # torch.save(model.state_dict(), 'model.pth')
+    # model.save(os.path.join(wandb.run.dir, "node.model"))
+    torch.save(model.state_dict(), os.path.join(wandb.run.dir, "exp.model"))
+    wandb.save(os.path.join(wandb.run.dir, "exp.model"))
   # wandb.save('model.pth')
 
 def test(test_dataset, model):
@@ -70,9 +79,13 @@ def test(test_dataset, model):
     for evolve_len in test_dataset:
         X,y = test_dataset[evolve_len]
         pred_y = model(X,evolve_len).squeeze(-1)
-        
+        # print('t',evolve_len)
         preds.append(pred_y)
         ys.append(y)
+        # print('X',X)
+        # print('pred_y', pred_y)
+        # print('y',y)
+        # exit(0)
         
     preds = torch.stack(preds,dim = 0)
     ys = torch.stack(ys,dim=0)

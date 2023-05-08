@@ -18,6 +18,10 @@ class DegeneratedMarkovStateEvolver(torch.nn.Module):
         self.net = nn.Sequential(
         nn.Linear(input_channels, hidden_channels),
         nn.Tanh(),
+        nn.Linear(hidden_channels, hidden_channels),
+        nn.Tanh(),
+        nn.Linear(hidden_channels, hidden_channels),
+        nn.Tanh(),
         nn.Linear(hidden_channels, input_channels)).to(self.device)
 
         # for m in self.net.modules():
