@@ -10,7 +10,13 @@ import wandb
 import utils
 import hydra
 from omegaconf import DictConfig, OmegaConf
-from non_int_env import NonIntTransistion
+from MDPs.no_action_world import NoActionMDP
+from MDPs.exp_mdp import ExpMDP
+from MDPs.trig_exp_mdp import TrigExpMDP
+from MDPs.trig_mdp import TrigMDP
+from MDPs.non_int_env import NonIntTransistion
+
+
 
 @hydra.main(version_base=None, config_path="conf",config_name="config")
 def main(cfg: DictConfig):
@@ -34,11 +40,18 @@ def main(cfg: DictConfig):
     print("Device: ",device)
 
     size = cfg.grid_size
-    world = GridWorldEnv(render_mode="rgb_array",size = size)
+    # world = GridWorldEnv(render_mode="rgb_array",size = size)
     # world = NonIntTransistion(render_mode="rgb_array",size = size)
+    # world = NoActionMDP(size = size)
+    # world = ExpMDP(size = size)
+    # world = TrigExpMDP(size = size)
+    world = TrigMDP(size = size)
+    
+    print("World: ", world.name)
+    
 
-    observation_space_dim = 4 # not a hyperparameter
-    action_space_dim = 4 # not a hyperparameter
+    observation_space_dim = 2 # not a hyperparameter
+    action_space_dim = 1 # not a hyperparameter
 
     #This is only used for getting the total number paramaeters in policy
     data_collecting_policy = policy.Policy(observation_space_dim,action_space_dim)
@@ -55,6 +68,7 @@ def main(cfg: DictConfig):
     num_epochs = cfg.num_epochs
 
     wandb.config.grid_size = size
+    wandb.config.env_name = world.name
     wandb.config.observation_space_dim = observation_space_dim
     wandb.config.action_space_dim = action_space_dim
     wandb.config.degenerated_state_space_dim = degenerated_state_space_dim

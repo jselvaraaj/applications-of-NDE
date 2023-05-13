@@ -24,12 +24,11 @@ def train(train_dataset, val_dataset,model,num_epochs= 100,batch_size = 16,verbo
             once = True
             for i,[evolve_len] in enumerate(evolve_lens):
                 X,y = shuffle(batch_X[i],batch_y[i])
-
                 pred_y = model(X,evolve_len).squeeze(-1)
                 preds.append(pred_y)
                 ys.append(y)
                 
-                if epoch >= num_epochs - 20 and once:
+                if (epoch %100 == 0 and once) or epoch == int(num_epochs)-1:
                     print('t',evolve_len)
                     print('X',X[:10])
                     print('pred_y', pred_y[:10])

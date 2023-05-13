@@ -15,6 +15,7 @@ class DataGenerator:
 
     def get_time_series(self, policy, n=10, t = 20,video_name=""):
         data = []
+        video_name = ""
 
         dmp = DegeneratedMarkovProcess(self.env,policy)
         
@@ -76,7 +77,9 @@ class DataGenerator:
             train_policies = policies
             
         number_of_policies_to_visualize = 5
-        visualize_policies = set(random.sample(list(range(len(train_policies))),min(number_of_policies_to_visualize,len(train_policies))))
+        # visualize_policies = set(random.sample(list(range(len(train_policies))),min(number_of_policies_to_visualize,len(train_policies))))
+        visualize_policies = []
+        
 
         state_time_series_train = []
         for i,policy in enumerate(train_policies):
@@ -141,6 +144,9 @@ class DataGenerator:
         test_evolve_lens = set(test_evolve_lens)
         val_evolve_lens = set(val_evolve_lens)
         
+        # test_evolve_lens = train_evolve_lens
+        # val_evolve_lens = train_evolve_lens
+        
         print("Shape of X used for training for a given evolution length", state_time_series_train[:,0].shape)
         print("Shape of y used for training for a given evolution length", state_time_series_train[:,0,:obs_space_dim].shape)
         print()
@@ -154,11 +160,11 @@ class DataGenerator:
               X_train = state_time_series_train[:,t1]
               y_train = state_time_series_train[:,t2,:obs_space_dim]
               train_dataset[t2-t1] = X_train, y_train
-            elif (t2-t1) in val_evolve_lens:
+            if (t2-t1) in val_evolve_lens:
               X_valid = state_time_series_val[:,t1]
               y_valid = state_time_series_val[:,t2,:obs_space_dim]
               val_dataset[t2-t1] = X_valid, y_valid
-            else:
+            if (t2-t1) in test_evolve_lens:
               X_test = state_time_series_test[:,t1]
               y_test = state_time_series_test[:,t2,:obs_space_dim]
               test_dataset[t2-t1] = X_test, y_test

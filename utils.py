@@ -27,7 +27,7 @@ def shuffle(X,y):
 def get_device():
     return "cuda" if torch.cuda.is_available() else "cpu"
 
-def align_policy(policy,grid_size,epochs=1e3):
+def align_policy(policy,grid_size,epochs=1e4):
     device = get_device()
     
     # policy.policy.train()
@@ -35,30 +35,37 @@ def align_policy(policy,grid_size,epochs=1e3):
     optimizer = torch.optim.Adam(policy.policy.parameters())
     
     # y = torch.nn.functional.one_hot(torch.flatten(torch.randint(0,4,(grid_size,grid_size),device=device))).to(torch.float)
+    
+    y = torch.rand((grid_size*grid_size,1),device=device)
 
-    y = torch.nn.functional.one_hot(torch.flatten(torch.full((grid_size,grid_size),3,device=device))).to(torch.float)
+    y[grid_size*grid_size//4:grid_size*grid_size//4 + grid_size*grid_size//8] = torch.randint(0,4,(grid_size*grid_size//8,1),device=device)
+
+    # y = torch.nn.functional.one_hot(torch.flatten(torch.full((grid_size,grid_size),3,device=device))).to(torch.float)
     
     # print(y)
     
     state = torch.from_numpy(np.asarray(list(np.ndindex(grid_size,grid_size)))).to(torch.float).to(device)
     
-    target = torch.full_like(state,grid_size//2,device=device).to(torch.float)
+    # target = torch.full_like(state,grid_size//2,device=device).to(torch.float)
     
-    X = torch.cat((state,target),dim=1)
+    # X = torch.cat((state,target),dim=1)
+    
+    X = state
     
     loss = 0
     for i in range(int(epochs)):
         optimizer.zero_grad()
         
         pred = policy.policy(X)
+      
+        loss = torch.nn.functional.mse_loss(pred, y)
         
-        loss = torch.nn.functional.cross_entropy(pred, y)
+        if i % 1000 == 0:
+            print(f"Epoch {i+1}, Loss ", loss.item())
         
         loss.backward()
         optimizer.step()
         
-        if (i+1) % (epochs/10) == 0:
-            print(f"Epoch {i+1}, Loss ", loss.item())
             
         
     return policy

@@ -22,6 +22,8 @@ class DegeneratedMarkovStateEvolver(torch.nn.Module):
         nn.Tanh(),
         nn.Linear(hidden_channels, hidden_channels),
         nn.Tanh(),
+        nn.Linear(hidden_channels, hidden_channels),
+        nn.Tanh(),
         nn.Linear(hidden_channels, input_channels)).to(self.device)
 
         # for m in self.net.modules():
@@ -60,7 +62,9 @@ class DynamicsFunction(torch.nn.Module):
         evolve_len = torch.tensor(float(evolve_len))
         t = torch.stack((torch.tensor(0.0),evolve_len)).to(self.device)
         pred_y = torchdiffeq.odeint(self.evolver, x, t)
+          
         pred_y = self.readout(pred_y.to(self.device))
+
         return pred_y[1]
 
 

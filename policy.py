@@ -39,10 +39,7 @@ class PolicyNetwork(nn.Module):
         self.device = utils.get_device()
 
         self.net = nn.Sequential(
-            nn.Linear(state_space_size, 16),
-            nn.Tanh(),
-            nn.Linear(16, action_space_size),
-            nn.Softmax(dim=1)
+            nn.Linear(state_space_size, action_space_size)
         ).to(self.device)
 
     def forward(self, x):

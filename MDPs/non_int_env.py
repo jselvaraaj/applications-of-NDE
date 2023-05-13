@@ -3,16 +3,19 @@ import pygame
 import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.registration import register
+import math
 
-class GridWorldEnv(gym.Env):
+class NonIntTransistion(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
     
     def __init__(self, render_mode=None, size=5,step_size=1):
         self.size = size  # The size of the square grid
         self.window_size = 1024  # The size of the PyGame window
-        self.name = "Grid World"
 
         self._target_location = np.asarray([size//2,size//2]) 
+        
+        self.name = "NonIntTransistion"
+
         
         self.observation_space = spaces.Dict(
             {
@@ -26,8 +29,8 @@ class GridWorldEnv(gym.Env):
         self.step_size = step_size
         self._action_to_direction = {
             0: np.array([step_size, 0]),
-            1: np.array([0, step_size]),
-            2: np.array([-step_size, 0]),
+            1: np.array([step_size, step_size]),
+            2: np.array([step_size, -step_size]),
             3: np.array([0, -step_size]),
         }
 
@@ -61,7 +64,7 @@ class GridWorldEnv(gym.Env):
       super().reset(seed=seed)
 
       # Choose the agent's location uniformly at random
-      self._agent_location = self.np_random.integers(0, self.size*(1/self.step_size), size=2, dtype=int)*self.step_size
+      self._agent_location = self.np_random.integers(0, self.size, size=2, dtype=int).astype(np.float32)
 
       self.history = [self._agent_location]
 
@@ -74,12 +77,12 @@ class GridWorldEnv(gym.Env):
       return observation, info
 
     def step(self, action):
-      # Map the action (element of {0,1,2,3}) to the direction we walk in
+      # e^(x^2)
       direction = self._action_to_direction[action]
       # We use `np.clip` to make sure we don't leave the grid
       self._agent_location = np.clip(
-          self._agent_location + direction, 0, self.size - 1
-      )
+          (np.sin(self._agent_location **2)*np.sqrt(direction**2)).astype(np.float32), 0, self.size - 1
+      ).astype(np.float32)
       # An episode is done iff the agent has reached the target
       terminated = np.array_equal(self._agent_location, self._target_location)
       reward = 1 if terminated else 0  # Binary sparse rewards
@@ -197,7 +200,3 @@ class GridWorldEnv(gym.Env):
       if self.window is not None:
           pygame.display.quit()
           pygame.quit()
-
-
-class EnvironmentWrapper:
-  pass
