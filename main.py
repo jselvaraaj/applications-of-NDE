@@ -40,22 +40,22 @@ def main(cfg: DictConfig):
     print("Device: ",device)
 
     size = cfg.grid_size
-    # world = GridWorldEnv(render_mode="rgb_array",size = size)
+    world = GridWorldEnv(render_mode="rgb_array",size = size)
     # world = NonIntTransistion(render_mode="rgb_array",size = size)
     # world = NoActionMDP(size = size)
     # world = ExpMDP(size = size)
     # world = TrigExpMDP(size = size)
-    world = TrigMDP(size = size)
+    # world = TrigMDP(size = size)
     
     print("World: ", world.name)
     
 
     observation_space_dim = 2 # not a hyperparameter
-    action_space_dim = 1 # not a hyperparameter
+    action_space_dim = 4 # not a hyperparameter
 
     #This is only used for getting the total number paramaeters in policy
     data_collecting_policy = policy.Policy(observation_space_dim,action_space_dim)
-
+    
     print("data collecting policy total parameters - ", data_collecting_policy.weights.shape[0])
     degenerated_state_space_dim = observation_space_dim + data_collecting_policy.weights.shape[0]
     print("Degenerated State space dim - ",degenerated_state_space_dim)

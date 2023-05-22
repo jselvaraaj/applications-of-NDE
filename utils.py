@@ -34,11 +34,11 @@ def align_policy(policy,grid_size,epochs=1e4):
     
     optimizer = torch.optim.Adam(policy.policy.parameters())
     
-    # y = torch.nn.functional.one_hot(torch.flatten(torch.randint(0,4,(grid_size,grid_size),device=device))).to(torch.float)
+    y = torch.nn.functional.one_hot(torch.flatten(torch.randint(0,4,(grid_size,grid_size),device=device))).to(torch.float)
     
-    y = torch.rand((grid_size*grid_size,1),device=device)
+#     y = torch.rand((grid_size*grid_size,1),device=device)
 
-    y[grid_size*grid_size//4:grid_size*grid_size//4 + grid_size*grid_size//8] = torch.randint(0,4,(grid_size*grid_size//8,1),device=device)
+#     y[grid_size*grid_size//4:grid_size*grid_size//4 + grid_size*grid_size//8] = torch.randint(0,4,(grid_size*grid_size//8,1),device=device)
 
     # y = torch.nn.functional.one_hot(torch.flatten(torch.full((grid_size,grid_size),3,device=device))).to(torch.float)
     
@@ -57,7 +57,7 @@ def align_policy(policy,grid_size,epochs=1e4):
         optimizer.zero_grad()
         
         pred = policy.policy(X)
-      
+        # print(pred.shape)
         loss = torch.nn.functional.mse_loss(pred, y)
         
         if i % 1000 == 0:

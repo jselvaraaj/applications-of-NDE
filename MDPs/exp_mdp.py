@@ -4,6 +4,7 @@ import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.registration import register
 import math
+import scipy.integrate as integrate
 
 class ExpMDP(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
@@ -65,9 +66,12 @@ class ExpMDP(gym.Env):
       return observation, info
 
     def step(self, action):
+      
+      fun1 = lambda a: math.exp(math.cos(a))
+      
+      fun2 = lambda a: math.exp(math.sin(a))
 
-
-      self._agent_location = (self._agent_location + np.asarray([math.exp(math.cos(action)), math.exp(math.sin(action))])).astype(np.float32)
+      self._agent_location = (self._agent_location + np.asarray([integrate.quad(fun1,0,action)[0],integrate.quad(fun2,0,action)[0]])).astype(np.float32)
     
       observation = self._get_obs()
       info = self._get_info()

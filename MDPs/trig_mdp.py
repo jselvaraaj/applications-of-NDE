@@ -4,6 +4,7 @@ import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.registration import register
 import math
+from scipy.integrate import quad_vec
 
 class TrigMDP(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
@@ -51,7 +52,8 @@ class TrigMDP(gym.Env):
     def reset(self, seed=None, options=None):
       # We need the following line to seed self.np_random
       super().reset(seed=seed)
-
+      
+      
       # Choose the agent's location uniformly at random
       self._agent_location = self.np_random.integers(0, self.size, size=2, dtype=int).astype(np.float32)
 
@@ -67,8 +69,9 @@ class TrigMDP(gym.Env):
 
     def step(self, action):
 
+      fun1 = lambda a: np.asarray([math.cos(a)**2, math.sin(a)**2])
 
-      self._agent_location = (self._agent_location + np.asarray([math.cos(action)**2, math.sin(action)**2])).astype(np.float32)
+      self._agent_location = (self._agent_location + quad_vec(fun1,0,action)[0]).astype(np.float32)
     
       observation = self._get_obs()
       info = self._get_info()

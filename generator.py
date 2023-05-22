@@ -15,10 +15,8 @@ class DataGenerator:
 
     def get_time_series(self, policy, n=10, t = 20,video_name=""):
         data = []
-        video_name = ""
-
         dmp = DegeneratedMarkovProcess(self.env,policy)
-        
+        # video_name = ""
         number_of_epi_to_visualize = 5
         visualize_epi = set(random.sample(list(range(n)),number_of_epi_to_visualize))
 

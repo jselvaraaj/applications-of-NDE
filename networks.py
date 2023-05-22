@@ -17,13 +17,14 @@ class DegeneratedMarkovStateEvolver(torch.nn.Module):
         # model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=False)
         self.net = nn.Sequential(
         nn.Linear(input_channels, hidden_channels),
-        nn.Tanh(),
+        nn.ReLU(),
         nn.Linear(hidden_channels, hidden_channels),
-        nn.Tanh(),
+        nn.ReLU(), 
         nn.Linear(hidden_channels, hidden_channels),
-        nn.Tanh(),
+        nn.ReLU(), 
         nn.Linear(hidden_channels, hidden_channels),
-        nn.Tanh(),
+        nn.ReLU(),  
+        # nn.Dropout(),
         nn.Linear(hidden_channels, input_channels)).to(self.device)
 
         # for m in self.net.modules():
@@ -44,7 +45,7 @@ class DynamicsFunction(torch.nn.Module):
 
         self.readin = nn.Sequential(
             nn.Linear(state_dim, hidden_channels),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(hidden_channels, hidden_channels),
         ).to(self.device)
 
@@ -52,7 +53,7 @@ class DynamicsFunction(torch.nn.Module):
 
         self.readout = nn.Sequential(
             nn.Linear(hidden_channels, hidden_channels),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(hidden_channels, observation_space_dim),
         ).to(self.device)
 
@@ -76,7 +77,7 @@ class NNBaseline(torch.nn.Module):
 
         self.readin = nn.Sequential(
             nn.Linear(state_dim, hidden_channels),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(hidden_channels, hidden_channels),
         ).to(self.device)
 
@@ -84,7 +85,7 @@ class NNBaseline(torch.nn.Module):
 
         self.readout = nn.Sequential(
             nn.Linear(hidden_channels, hidden_channels),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(hidden_channels, observation_space_dim),
         ).to(self.device)
 

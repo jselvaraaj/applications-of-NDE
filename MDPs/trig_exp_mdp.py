@@ -4,6 +4,7 @@ import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.registration import register
 import math
+from scipy.integrate import quad_vec
 
 class TrigExpMDP(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
@@ -67,8 +68,9 @@ class TrigExpMDP(gym.Env):
 
     def step(self, action):
 
-
-      self._agent_location = (self._agent_location + np.asarray([math.exp(math.cos(action)**2), math.exp(math.sin(action)**2)])).astype(np.float32)
+      fun1 = lambda a: np.asarray([math.exp(math.cos(a)**2), math.exp(math.sin(a)**2)])
+      
+      self._agent_location = (self._agent_location + quad_vec(fun1,0,action)[0]).astype(np.float32)
     
       observation = self._get_obs()
       info = self._get_info()
