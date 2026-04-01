@@ -5,5 +5,3 @@ This repository explores the use of **Neural Ordinary Differential Equations (NO
   - Faster training (in epochs)
   - Lower compounding errors
   - Improved data efficiency
-
-[Thesis Manuscript](https://drive.google.com/file/d/1SVuLQSOrtaSTHUsr1soHKxgw2R9sRfnd/view)
